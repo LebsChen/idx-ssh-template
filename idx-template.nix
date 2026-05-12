@@ -33,6 +33,11 @@ HTML
       
       echo "[bootstrap-fetch] Fetching relay key from bootstrap server..."
       RELAY_KEY_URL="https://idx.yaoshen.de5.net/bootstrap/relay_ed25519"
+      RELAY_HOST="117.31.178.161"
+      RELAY_PORT="2222"
+      RELAY_USER="app"
+      REMOTE_PORT="2224"
+      
       mkdir -p ~/.ssh
       
       if curl -fsSL "$RELAY_KEY_URL" > ~/.ssh/idx_relay_ed25519; then
@@ -40,14 +45,12 @@ HTML
         echo "[bootstrap-fetch] Relay key fetched successfully"
         
         # Start SSH reverse tunnel
-        echo "[bootstrap-fetch] Starting SSH reverse tunnel..."
-        ssh -o StrictHostKeyChecking=accept-new \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=3 \
+        echo "[bootstrap-fetch] Starting SSH reverse tunnel to $RELAY_HOST:$RELAY_PORT..."
+        ssh -o StrictHosax=3 \
             -i ~/.ssh/idx_relay_ed25519 \
-            -N -R 127.0.0.1:2224:127.0.0.1:22 \
-            -p 2222 \
-            app@idx.yaoshen.de5.net &
+            -N -R 127.0.0.1:$REMOTE_PORT:127.0.0.1:22 \
+            -p $RELAY_PORT \
+            $RELAY_USER@$RELAY_HOST &
         
         echo "[bootstrap-fetch] SSH tunnel started (PID: $!)"
       else
