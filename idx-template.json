@@ -1,5 +1,12 @@
 {
   "name": "Firebase Studio SSH Workspace",
   "description": "A minimal workspace with SSH reverse tunnel to relay server",
-  "icon": "https://www.gstatic.com/devrel-devsite/prod/v2e234c768cbe18f0f2e53e3e3146b39ce624f2e55c0e09b1c9c6a8e8c8e8c8e8/firebase/images/touchicon-180.png"
+  "icon": "https://www.gstatic.com/devrel-devsite/prod/v2e234c768cbe18f0f2e53e3e3146b39ce624f2e55c0e09b1c9c6a8e8c8e8c8e8/firebase/images/touchicon-180.png",
+  "params": [
+    {
+      "id": "mobile_sdk_support\   "type": "boolean",
+      "label": "Mobile SDK Support",
+      "default": true
+    }
+  ]
 }
