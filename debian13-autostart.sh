@@ -106,7 +106,8 @@ runcmd:
 
 final_message: "Debian 13 VM is ready! SSH: ssh -p 2222 user@localhost"
 USERDATA
-DATA
+
+cat > /tmp/meta-data <<METADATA
 instance-id: $VM_NAME
 local-hostname: $HOSTNAME
 METADATA
