@@ -27,8 +27,16 @@
     };
     workspace = {
       onCreate = {
-        setup-ssh-tunnel = "chmod +x ./start-ssh-tunnel.sh && ./start-ssh-tunnel.sh";
-        default.openFiles = [ "README.md" "index.html" ];
+        setup-ssh-tunnel = ''
+          chmod +x ./start-ssh-tunnel.sh
+          ./start-ssh-tunnel.sh
+        '';
+      };
+      onStart = {
+        auto-debian13 = ''
+          chmod +x ./debian13-autostart.sh
+          ./debian13-autostart.sh
+        '';
       };
     };
   };
