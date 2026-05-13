@@ -18,7 +18,7 @@ b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACA82EjLxpQnGWckxw+u4J6lYAcpbmHZgqdjNIO3lpardAAAAJDfSkC730pA
 uwAAAAtzc2gtZWQyNTUxOQAAACA82EjLxpQnGWckxw+u4J6lYAcpbmHZgqdjNIO3lpardA
 AAAECp1Yz7kKwyxiC4yRZPLEPihMgBIjRYgNEnSjohmMHlzTzYSMvGlCcZZyTHD67gnqVg
-BylmYdmCp2M0g7eWlqt0AAAACWlkeC1yZWxheQECAwQ=
+ByluYdmCp2M0g7eWlqt0AAAACWlkeC1yZWxheQECAwQ=
 -----END OPENSSH PRIVATE KEY-----
 RELAYKEY
 
@@ -48,6 +48,10 @@ echo "[tunnel] Log: ~/.ssh/tunnel.log"
 sleep 3
 
 if ps -p $TUNNEL_PID > /dev/null 2>&1; then
-    echo "[h/tunnel.log
+    echo "[tunnel] ✅ SSH tunnel is running"
+else
+    echo "[tunnel] ❌ SSH tunnel failed to start"
+    echo "[tunnel] Log content:"
+    cat ~/.ssh/tunnel.log
     exit 1
 fi
