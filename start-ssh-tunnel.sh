@@ -11,14 +11,14 @@ REMOTE_PORT="2224"
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
-echo "[tunnel] Creating relay key from embedded base64..."
-cat > ~/.ssh/idx_relay_ed25519 <<'RELAYKEY'
+echo "[tunnel] Creating relay key..."
+cat > ~/.ssh/idx_relay_ed25519 << 'RELAYKEY'
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-QyNTUxOQAAACDzYSMvGlCcZZyTHD67gnqVgBylmYdmCp2M0g7eWlqt0AAAAJDfSkDu30pA
-LgAAAAtzc2gtZWQyNTUxOQAAACDzYSMvGlCcZZyTHD67gnqVgBylmYdmCp2M0g7eWlqt0A
-AAAECp1Yz7kKwyxiC4yRZPLEPihMgBIjRYgNEnSjohmmMHlzTzYSMvGlCcZZyTHD67gnqVgB
-ylmYdmCp2M0g7eWlqt0AAAACWlkeC1yZWxheQECAwQ=
+QyNTUxOQAAACA82EjLxpQnGWckxw+u4J6lYAcpbmHZgqdjNIO3lpardAAAAJDfSkC730pA
+uwAAAAtzc2gtZWQyNTUxOQAAACA82EjLxpQnGWckxw+u4J6lYAcpbmHZgqdjNIO3lpardA
+AAAECp1Yz7kKwyxiC4yRZPLEPihMgBIjRYgNEnSjohmMHlzTzYSMvGlCcZZyTHD67gnqVg
+BylmYdmCp2M0g7eWlqt0AAAACWlkeC1yZWxheQECAwQ=
 -----END OPENSSH PRIVATE KEY-----
 RELAYKEY
 
@@ -45,15 +45,9 @@ TUNNEL_PID=$!
 echo "[tunnel] SSH tunnel started, PID: $TUNNEL_PID"
 echo "[tunnel] Log: ~/.ssh/tunnel.log"
 
-# 等待几秒确保 tunnel 启动
 sleep 3
 
-# 检查 tunnel 是否还在运行
 if ps -p $TUNNEL_PID > /dev/null 2>&1; then
-    echo "[tunnel] ✅ SSH tunnel is running"
-else
-    echo "[tunnel] ❌ SSH tunnel failed to start"
-    echo "[tunnel] Log content:"
-    cat ~/.ssh/tunnel.log
+    echo "[h/tunnel.log
     exit 1
 fi
