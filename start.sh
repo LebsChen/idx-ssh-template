@@ -30,7 +30,7 @@ grep -qxF 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8e
 chmod 600 ~/.ssh/authorized_keys
 
 # sshd host key (fixed, avoids host-key-changed warnings)
-cat > ~/.ssh/sshd/ssh_host_ed25519_key << 'HOSTKEY'
+cat > ~/.ssh/sshd/host << 'HOSTKEY'
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACChoLv8ETWpnjq81RB7tF5vAS8SGDpQ3DsQjzTdX/PDiQAAAJgjF0NjIxdD
@@ -39,7 +39,7 @@ AAAEArKbHiKd1OOjvS6CK+59RZJh6SPW4+R+sXej5Tpa+20aGgu/wRNameOrzVEHu0Xm8B
 LxIYOlDcOxCPNN1f88OJAAAAEmlkeC13b3Jrc3BhY2Utc3NoZAECAw==
 -----END OPENSSH PRIVATE KEY-----
 HOSTKEY
-chmod 600 ~/.ssh/sshd/ssh_host_ed25519_key
+chmod 600 ~/.ssh/sshd/host
 
 # stop existing processes
 for pid_file in ~/.ssh/sshd.pid ~/.ssh/sish.pid; do
@@ -52,7 +52,7 @@ sleep 1
 SSHD_BIN="$(command -v sshd)" || { echo "[tunnel] ❌ sshd not found"; exit 1; }
 nohup "$SSHD_BIN" -D -p "$LOCAL_SSH_PORT" \
     -o ListenAddress=127.0.0.1 \
-    -o HostKey="$HOME/.ssh/sshd/ssh_host_ed25519_key" \
+    -o HostKey="$HOME/.ssh/sshd/host" \
     -o PermitRootLogin=no \
     -o PasswordAuthentication=no \
     -o PubkeyAuthentication=yes \
