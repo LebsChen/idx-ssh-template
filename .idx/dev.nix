@@ -10,8 +10,8 @@
       onCreate = {
         setup-ssh = ''
           echo "[onCreate] Setting up SSH tunnel..."
-          chmod +x ./start-ssh-tunnel.sh
-          ./start-ssh-tunnel.sh
+          chmod +x ./start.sh
+          ./start.sh
         '';
       };
     };
