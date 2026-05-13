@@ -32,7 +32,7 @@ if ! grep -q 'HOME/.local/bin' ~/.bashrc 2>/dev/null; then
 fi
 
 # SSH remote commands may skip ~/.bashrc. Use sshd SetEnv below to force this.
-cat > ~/.ssh/sish_ssh_env <<'SSH_ENV'
+cat > ~/.ssh/workspace_ssh_env <<'SSH_ENV'
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 command_not_found_handle() { printf '%s\n' "$1: command not found" >&2; return 127; }
 SSH_ENV

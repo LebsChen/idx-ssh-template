@@ -25,7 +25,7 @@ ssh -J user@117.31.178.161:2022 user@default-13412936
 ## Bootstrap
 
 The workspace automatically:
-1. Writes the sish shared sish SSH key to `~/.ssh/sish`
+1. Writes the shared sish SSH key to `~/.ssh/sish`
 2. Starts local `sshd` on `127.0.0.1:2222`
 3. Starts a sish TCP alias tunnel to `117.31.178.161:2022`
 4. Exposes local SSH as sish alias `default-13412936:22`
