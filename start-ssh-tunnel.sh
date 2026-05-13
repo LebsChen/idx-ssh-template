@@ -3,7 +3,8 @@ set -e
 
 echo "[tunnel] Starting SSH tunnel setup..."
 
-RELAY_HOST="117.31.178.161"
+# 配置（使用域名）
+RELAY_HOST="idx.yaoshen.de5.net"
 RELAY_PORT="2222"
 RELAY_USER="app"
 REMOTE_PORT="2224"
@@ -55,13 +56,9 @@ echo "[tunnel] sshd started, PID: $SSHD_PID"
 sleep 2
 
 # 6. Start SSH reverse tunnel
-echo "[tunnel] Starting SSH reverse tunnel..."
+echo "[tunnel] Starting SSH reverse tunnel to $RELAY_HOST:$RELAY_PORT..."
 nohup ssh -N -R "127.0.0.1:$REMOTE_PORT:127.0.0.1:$LOCAL_SSH_PORT" \
-    -i ~/.ssh/idx_relay_ed25519 \
-    -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    -o ServerAliveInterval=60 \
-    -o ServerAliveCountMax=3 \
+    -i ~/.ssh/idx_reServerAliveCountMax=3 \
     -p "$RELAY_PORT" \
     "$RELAY_USER@$RELAY_HOST" \
     > ~/.ssh/tunnel.log 2>&1 &
@@ -86,3 +83,4 @@ else
 fi
 
 echo "[tunnel] Setup complete!"
+echo "[tunnel] Relay: $RELAY_HOST:$RELAY_PORT -> Remote port: $REMOTE_PORT"
