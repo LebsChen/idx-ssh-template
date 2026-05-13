@@ -10,9 +10,36 @@ RELAY_USER="app"
 REMOTE_PORT="${REMOTE_PORT:-2002}"
 LOCAL_SSH_PORT="${LOCAL_SSH_PORT:-2222}"
 
-# 1. Setup SSH directory
-mkdir -p ~/.ssh
+# 1. Setup SSH directory and user bin
+mkdir -p ~/.ssh ~/.local/bin
 chmod 700 ~/.ssh
+
+# Firebase Studio can miss hostname(1); provide a small shim so SSH commands
+# like `hostname` do not trip the broken /etc/bashrc command-not-found hook.
+cat > ~/.local/bin/hostname <<'HOSTNAME_SHIM'
+#!/bin/sh
+cat /etc/hostname 2>/dev/null || printf '%s\n' "idx-workspace"
+HOSTNAME_SHIM
+chmod +x ~/.local/bin/hostname
+
+# Make the shim visible for interactive and SSH command sessions.
+case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+if ! grep -q 'HOME/.local/bin' ~/.bashrc 2>/dev/null; then
+    printf '
+# IDX SSH tunnel helpers
+export PATH="$HOME/.local/bin:$PATH"
+' >> ~/.bashrc
+fi
+
+# Non-interactive SSH commands run through bash may skip ~/.bashrc. Make the
+# sshd process inherit BASH_ENV so commands like `ssh ... hostname` see the shim.
+cat > ~/.ssh/idx_ssh_env <<'SSH_ENV'
+export PATH="$HOME/.local/bin:$PATH"
+SSH_ENV
+export BASH_ENV="$HOME/.ssh/idx_ssh_env"
 
 # 2. Create relay key
 echo "[tunnel] Creating relay key..."
