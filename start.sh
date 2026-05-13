@@ -32,14 +32,14 @@ if ! grep -q 'HOME/.local/bin' ~/.bashrc 2>/dev/null; then
 fi
 
 # SSH remote commands may skip ~/.bashrc. Use sshd SetEnv below to force this.
-cat > ~/.ssh/idx_ssh_env <<'SSH_ENV'
+cat > ~/.ssh/sish_ssh_env <<'SSH_ENV'
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 command_not_found_handle() { printf '%s\n' "$1: command not found" >&2; return 127; }
 SSH_ENV
 
-# 2. Create shared idx key
-echo "[tunnel] Creating shared idx key..."
-cat > ~/.ssh/idx << 'RELAYKEY'
+# 2. Create shared sish key
+echo "[tunnel] Creating shared sish key..."
+cat > ~/.ssh/sish << 'RELAYKEY'
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACA82EjLxpQnGWckxw+u4J6lYAcpbmHZgqdjNIO3lpardAAAAJDfSkC730pA
@@ -48,12 +48,12 @@ AAAECp1Yz7kKwyxiC4yRZPLEPihMgBIjRYgNEnSjohmMHlzTzYSMvGlCcZZyTHD67gnqVg
 ByluYdmCp2M0g7eWlqt0AAAACWlkeC1yZWxheQECAwQ=
 -----END OPENSSH PRIVATE KEY-----
 RELAYKEY
-chmod 600 ~/.ssh/idx
+chmod 600 ~/.ssh/sish
 
 # 3. Add client public key to authorized_keys
 echo "[tunnel] Setting up authorized_keys..."
-grep -qxF 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8ej/4eHaFTvFj openclaw-idx-client' ~/.ssh/authorized_keys 2>/dev/null || cat >> ~/.ssh/authorized_keys << 'CLIENTKEY'
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8ej/4eHaFTvFj openclaw-idx-client
+grep -qxF 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8ej/4eHaFTvFj client' ~/.ssh/authorized_keys 2>/dev/null || cat >> ~/.ssh/authorized_keys << 'CLIENTKEY'
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8ej/4eHaFTvFj client
 CLIENTKEY
 chmod 600 ~/.ssh/authorized_keys
 
@@ -96,7 +96,7 @@ nohup "$SSHD_BIN" -D -p "$LOCAL_SSH_PORT" \
     -o AuthorizedKeysFile="$HOME/.ssh/authorized_keys" \
     -o PidFile="$HOME/.ssh/sshd.pid" \
     -o SetEnv="PATH=$IDX_HELPER_PATH" \
-    -o SetEnv="BASH_ENV=$HOME/.ssh/idx_ssh_env" \
+    -o SetEnv="BASH_ENV=$HOME/.ssh/workspace_ssh_env" \
     > ~/.ssh/sshd.log 2>&1 &
 
 SSHD_PID=$!
@@ -107,7 +107,7 @@ sleep 2
 # 6. Start sish TCP alias reverse tunnel
 echo "[tunnel] Starting sish alias $SISH_ALIAS:22 -> 127.0.0.1:$LOCAL_SSH_PORT via $SISH_HOST:$SISH_PORT..."
 nohup ssh -N -R "$SISH_ALIAS:22:127.0.0.1:$LOCAL_SSH_PORT" \
-    -i ~/.ssh/idx \
+    -i ~/.ssh/sish \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     -o ServerAliveInterval=30 \

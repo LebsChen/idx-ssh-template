@@ -25,7 +25,7 @@ ssh -J user@117.31.178.161:2022 user@default-13412936
 ## Bootstrap
 
 The workspace automatically:
-1. Writes the sish shared idx SSH key to `~/.ssh/idx`
+1. Writes the sish shared sish SSH key to `~/.ssh/sish`
 2. Starts local `sshd` on `127.0.0.1:2222`
 3. Starts a sish TCP alias tunnel to `117.31.178.161:2022`
 4. Exposes local SSH as sish alias `default-13412936:22`
@@ -38,6 +38,15 @@ cat ~/.ssh/sish.log
 ps aux | grep ssh
 ```
 
+## Key names
+
+Use two shared keys for all workspaces:
+
+```text
+sish   -> logs into sish/jump server
+client -> logs into the workspace sshd behind the alias
+```
+
 ## Optional SSH config
 
 Add this to `~/.ssh/config` if you want official-style short commands:
@@ -47,13 +56,13 @@ Host idx.yaoshen.de5.net
   HostName 117.31.178.161
   Port 2022
   User user
-  IdentityFile ~/.ssh/idx
+  IdentityFile ~/.ssh/sish
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 
 Host default-13412936
   User user
-  IdentityFile ~/.ssh/idx_client_ed25519
+  IdentityFile ~/.ssh/client
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 ```
