@@ -6,7 +6,7 @@ echo "[tunnel] Starting SSH tunnel setup (sish alias mode)..."
 # sish TCP alias config. This creates an internal alias, not a public TCP port.
 # Client example:
 # ssh -J user@117.31.178.161:2022 user@default-13412936
-SISH_HOST="${SISH_HOST:-117.31.178.161}"
+SISH_HOST="${SISH_HOST:-idx.yaoshen.de5.net}"
 SISH_PORT="${SISH_PORT:-2022}"
 SISH_USER="${SISH_USER:-user}"
 SISH_ALIAS="${SISH_ALIAS:-default-13412936}"
