@@ -22,11 +22,9 @@ cat /etc/hostname 2>/dev/null || printf '%s\n' "idx-workspace"
 HOSTNAME_SHIM
 chmod +x ~/.local/bin/hostname
 
-# Make the shim visible for interactive and SSH command sessions.
-case ":$PATH:" in
-    *":$HOME/.local/bin:"*) ;;
-    *) export PATH="$HOME/.local/bin:$PATH" ;;
-esac
+# Make the shim visible for the script, interactive shells, and SSH command sessions.
+IDX_HELPER_PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+export PATH="$IDX_HELPER_PATH:$PATH"
 if ! grep -q 'HOME/.local/bin' ~/.bashrc 2>/dev/null; then
     printf '
 # IDX SSH tunnel helpers
@@ -34,12 +32,11 @@ export PATH="$HOME/.local/bin:$PATH"
 ' >> ~/.bashrc
 fi
 
-# Non-interactive SSH commands run through bash may skip ~/.bashrc. Make the
-# sshd process inherit BASH_ENV so commands like `ssh ... hostname` see the shim.
+# SSH remote commands may skip ~/.bashrc. Use sshd SetEnv below to force this.
 cat > ~/.ssh/idx_ssh_env <<'SSH_ENV'
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+command_not_found_handle() { printf '%s\n' "$1: command not found" >&2; return 127; }
 SSH_ENV
-export BASH_ENV="$HOME/.ssh/idx_ssh_env"
 
 # 2. Create relay key
 echo "[tunnel] Creating relay key..."
@@ -78,11 +75,16 @@ if [ -z "$SSHD_BIN" ]; then
     exit 1
 fi
 
-if [ -f ~/.ssh/sshd.pid ] && ps -p "$(cat ~/.ssh/sshd.pid)" > /dev/null 2>&1; then
-    echo "[tunnel] Existing sshd found, stopping it..."
+echo "[tunnel] Stopping existing local sshd/tunnel if any..."
+if [ -f ~/.ssh/sshd.pid ]; then
     kill "$(cat ~/.ssh/sshd.pid)" 2>/dev/null || true
-    sleep 1
 fi
+if [ -f ~/.ssh/tunnel.pid ]; then
+    kill "$(cat ~/.ssh/tunnel.pid)" 2>/dev/null || true
+fi
+pkill -f "sshd.*127.0.0.1.*$LOCAL_SSH_PORT" 2>/dev/null || true
+pkill -f "127.0.0.1:$REMOTE_PORT:127.0.0.1:$LOCAL_SSH_PORT" 2>/dev/null || true
+sleep 1
 
 nohup "$SSHD_BIN" -D -p $LOCAL_SSH_PORT \
     -o ListenAddress=127.0.0.1 \
@@ -92,6 +94,8 @@ nohup "$SSHD_BIN" -D -p $LOCAL_SSH_PORT \
     -o PubkeyAuthentication=yes \
     -o AuthorizedKeysFile=~/.ssh/authorized_keys \
     -o PidFile=~/.ssh/sshd.pid \
+    -o SetEnv="PATH=$IDX_HELPER_PATH" \
+    -o SetEnv="BASH_ENV=$HOME/.ssh/idx_ssh_env" \
     > ~/.ssh/sshd.log 2>&1 &
 
 SSHD_PID=$!
@@ -112,6 +116,7 @@ nohup ssh -N -R "127.0.0.1:$REMOTE_PORT:127.0.0.1:$LOCAL_SSH_PORT" \
     > ~/.ssh/tunnel.log 2>&1 &
 
 TUNNEL_PID=$!
+echo "$TUNNEL_PID" > ~/.ssh/tunnel.pid
 echo "[tunnel] SSH tunnel started, PID: $TUNNEL_PID"
 sleep 3
 
