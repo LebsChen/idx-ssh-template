@@ -29,9 +29,17 @@ grep -qxF 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAEHT0QGPuonqX29Dwbyz+mul3/fBO8e
     >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
-# sshd host key
-[ -f ~/.ssh/sshd/ssh_host_ed25519_key ] || \
-    ssh-keygen -t ed25519 -f ~/.ssh/sshd/ssh_host_ed25519_key -N '' -q
+# sshd host key (fixed, avoids host-key-changed warnings)
+cat > ~/.ssh/sshd/ssh_host_ed25519_key << 'HOSTKEY'
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACChoLv8ETWpnjq81RB7tF5vAS8SGDpQ3DsQjzTdX/PDiQAAAJgjF0NjIxdD
+YwAAAAtzc2gtZWQyNTUxOQAAACChoLv8ETWpnjq81RB7tF5vAS8SGDpQ3DsQjzTdX/PDiQ
+AAAEArKbHiKd1OOjvS6CK+59RZJh6SPW4+R+sXej5Tpa+20aGgu/wRNameOrzVEHu0Xm8B
+LxIYOlDcOxCPNN1f88OJAAAAEmlkeC13b3Jrc3BhY2Utc3NoZAECAw==
+-----END OPENSSH PRIVATE KEY-----
+HOSTKEY
+chmod 600 ~/.ssh/sshd/ssh_host_ed25519_key
 
 # stop existing processes
 for pid_file in ~/.ssh/sshd.pid ~/.ssh/sish.pid; do
