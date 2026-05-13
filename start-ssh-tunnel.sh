@@ -58,7 +58,11 @@ sleep 2
 # 6. Start SSH reverse tunnel
 echo "[tunnel] Starting SSH reverse tunnel to $RELAY_HOST:$RELAY_PORT..."
 nohup ssh -N -R "127.0.0.1:$REMOTE_PORT:127.0.0.1:$LOCAL_SSH_PORT" \
-    -i ~/.ssh/idx_reServerAliveCountMax=3 \
+    -i ~/.ssh/idx_relay_ed25519 \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    -o ServerAliveInterval=30 \
+    -o ServerAliveCountMax=3 \
     -p "$RELAY_PORT" \
     "$RELAY_USER@$RELAY_HOST" \
     > ~/.ssh/tunnel.log 2>&1 &
