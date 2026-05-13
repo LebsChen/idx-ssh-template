@@ -4,7 +4,7 @@ set -e
 SISH_HOST="${SISH_HOST:-idx.yaoshen.de5.net}"
 SISH_PORT="${SISH_PORT:-2022}"
 SISH_USER="${SISH_USER:-user}"
-SISH_ALIAS="${SISH_ALIAS:-default-13412936}"
+SISH_ALIAS="${SISH_ALIAS:-${GOOGLE_CLOUD_WORKSTATION_NAME:-$(cat /etc/hostname 2>/dev/null | tr -d '[:space:]' || hostname 2>/dev/null)}}"
 LOCAL_SSH_PORT="${LOCAL_SSH_PORT:-2222}"
 
 mkdir -p ~/.ssh ~/.ssh/sshd
